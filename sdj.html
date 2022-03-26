@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/index.css">
+</head>
+<style>
+
+    /* div{
+        border: solid 1px black;
+    } */
+    /* #navbar{
+
+        height: 100px;
+    } */
+
+    #main{
+        display: flex;
+        height: 600px;
+        gap: 50px;
+        background-color: whitesmoke;
+    }
+
+    #video_details{
+        flex: 3;
+        margin: 20px 20px;
+    }
+
+    #recommendation{
+        flex: 1.5;
+    }
+
+    #recommendation{
+        background-color: beige;
+        margin: 20px 20px;
+        
+    }
+</style>
+<body>
+    <div id="container"></div>
+
+    <div id="main">
+        <div id="video_details">
+            <div id="videos"></div>
+            <!-- <div id="video_title">title</div> -->
+        </div>
+
+        <div id="search_results"></div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    import navbar from "./components/navbar.js";
+    console.log("navbar:", navbar);
+  
+    let container = document.getElementById("container");
+    container.innerHTML = navbar();
+    
+</script>
+
+<script type = "module">
+
+    // recommendation part-----------------------------------
+
+let url = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&regionCode=IN&maxResults=20&key=AIzaSyA2YZKo5xi7ONczJP8MGGl2a98QQn-nC5o";
+
+mostPopular();
+
+async function mostPopular(){
+
+try{
+    let res = await fetch(url);
+
+    let data = await res.json();
+    console.log("data", data);
+
+    let array_of_videos = data.items;
+
+    appendVideos(array_of_videos);
+
+}
+
+catch (error){
+    console.log("err:", err);
+}
+
+}
+
+const appendVideos = (arr) => {
+    console.log('arr',arr)
+
+    let recommendation_div = document.getElementById("recommendation");
+    // recommendation_div.innerHTML= "";
+
+    arr.forEach(({ snippet, id: { videoId } }) => {
+    // console.log("videoId:", videoId);
+    console.log("snippet:", snippet);
+
+    let div = document.createElement("div");
+
+    // let iframe = document.createElement("iframe");
+    // iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    // iframe.width = "460px";
+    // iframe.height = "260px";
+    // iframe.allowfullscreen = "true";
+
+    // iframe.setAttribute("allowfullscreen", true);
+
+    let title = document.createElement('p');
+    title.innerText = snippet.title
+
+    let thumbnail = document.createElement('img');
+    thumbnail.src = snippet.thumbnails.medium.url
+
+    let data_to_send = {
+
+      snippet: snippet, // if the key value pair is same then we can write direct the value like- snippet
+      videoId: videoId,
+    //   title: title,
+
+    }
+
+    div.onclick = () =>{
+      showVideo(data_to_send)
+
+    }
+
+    div.append( thumbnail, title);
+
+    recommendation_div.append(div);
+
+
+  });
+
+
+};
+
+function showVideo(data){
+
+  localStorage.setItem('clicked_video', JSON.stringify(data));
+
+  window.location.href = "video.html"
+
+}
+
+
+
+// show video part-----------
+
+
+    let {videoId} = JSON.parse(localStorage.getItem('clicked_video'));
+
+    let video_div = document.getElementById('video_details');
+
+    let iframe = document.createElement('iframe')
+
+    iframe.src = `https://www.youtube.com/embed/${videoId}`
+    iframe.width = "100%"
+    iframe.height ="100%"
+
+    iframe.setAttribute('allowfullscreen', "true");
+
+    video_div.append(iframe);
+
+
+</script>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+
+  <link rel="stylesheet" href="./styles/index.css">
+  <script src="https://kit.fontawesome.com/6f75fa279e.js" crossorigin="anonymous"></script>
+</head>
+
+
+<body>
+  <div id="container"></div>
+
+  <div id="content">
+    <div id="left">
+        <a href="./index.html"><button id="btn">Home</button><br></a>
+        <button id="btn">Explore</button><br>
+        <button id="btn">Subscription</button><br>
+        <button id="btn">Library</button><br>
+        <button id="btn">History</button><br>
+        <button id="btn">Settings</button><br>
+        <button id="btn">Help</button><br>
+        <button id="btn">Feedback</button><br>      
+    </div>
+
+    <div id="search_results"></div>
+  </div>
+</body>
+
+</html>
+
+<script type="module">
+
+  import navbar from "./components/navbar.js";
+  console.log("navbar:", navbar);
+
+  let container = document.getElementById("container");
+  container.innerHTML = navbar();
+
+</script>
+
+<script type="module">
+// popular videos part---------------------
+
+let url = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&regionCode=IN&maxResults=20&key=AIzaSyA587PTqZ99M5FDe92tAVLD7C5u5GEmups";
+
+mostPopular();
+
+async function mostPopular(){
+
+    try{
+        let res = await fetch(url);
+
+        let data = await res.json();
+        console.log("data", data);
+
+        let array_of_videos = data.items;
+
+        appendVideos(array_of_videos);
+
+    }
+
+    catch (err){
+        console.log("err:", err);
+    }
+
+}
+
+
+// search video part-----------------------------
+
+
+
+  //https://youtube.googleapis.com/youtube/v3/search?q=tesla&key=[YOUR_API_KEY]
+
+  let API = "AIzaSyA587PTqZ99M5FDe92tAVLD7C5u5GEmups"
+
+  document.getElementById("buttons").addEventListener("click", searchVideos);
+
+let search_results_div = document.getElementById("search_results");
+
+async function searchVideos() {
+  try {
+    let inp = document.getElementById("search").value;
+
+    let res = await fetch(
+      `https://youtube.googleapis.com/youtube/v3/search?q=${inp}&key=${API}&type=video&maxResults=20&part=snippet`
+    );
+
+    let data = await res.json();
+    console.log("data:", data);
+
+    let array_of_videos = data.items;
+
+
+    appendVideos(array_of_videos);
+  } catch (err) {
+    console.log("err:", err);
+  }
+}
+
+// append video part-----------------
+
+const appendVideos = (arr) => {
+    console.log('arr',arr)
+
+    search_results_div.innerHTML= null
+
+    arr.forEach(({ snippet,id: { videoId } }) => {
+    console.log("videoId:", videoId);
+    console.log("snippet:", snippet);
+
+    let div = document.createElement("div");
+
+    // let iframe = document.createElement("iframe");
+    // iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    // iframe.width = "460px";
+    // iframe.height = "260px";
+    // iframe.allowfullscreen = "true";
+
+    // iframe.setAttribute("allowfullscreen", true);
+
+    let title = document.createElement('p');
+    title.innerText = snippet.title
+
+    let thumbnail = document.createElement('img');
+    thumbnail.src = snippet.thumbnails.medium.url
+
+    var p = document.createElement("p");
+    p.innerText= snippet.channelTitle;
+
+    let data_to_send = {
+
+      snippet: title, // if the key value pair is same then we can write direct the value like- snippet
+      videoId: videoId,
+      snippet:title
+
+    }
+
+    div.onclick = () =>{
+      showVideo(data_to_send)
+
+    }
+
+    div.append( thumbnail, title);
+
+    search_results_div.append(div);
+
+
+  });
+
+
+};
+
+// show video part--------------
+
+function showVideo(data){
+
+  localStorage.setItem('clicked_video', JSON.stringify(data));
+
+  window.location.href = "video.html"
+
+}
+
+</script>

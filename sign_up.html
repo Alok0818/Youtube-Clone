@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- <link rel="stylesheet" href="./styles/index.css"> -->
+  </head>
+
+  <style>
+    ----------------------------------------------------------------------------
+  .container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  justify-content: center;
+  align-content: center;
+  width: 30%;
+  margin: auto;
+  
+}
+
+#logo {
+  margin: 0 auto;
+}
+.signup_container {
+  background-color: white;
+  text-align: center;
+  border: 5px solid #82ba3c;
+  border-radius: 10px;
+  width: 400px;
+  padding-bottom: 25px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+  font-family: cursive;
+  color: #82ba3c;
+  margin: auto;
+}
+
+label {
+  display: block;
+  margin: 10px 0;
+  color: black;
+}
+
+input {
+  border: 2px solid #82ba3c;
+  padding: 10px 10px;
+  width: 90%;
+}
+
+#signupButton {
+  margin-top: 20px;
+  width: 60%;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #82ba3c;
+  font-size: 18px;
+  font-weight: bolder;
+  border-radius: 10px;
+}
+#signupButton:hover {
+  background-color: white;
+  border: 2px solid #82ba3c;
+  color: #82ba3c;
+}
+@media only screen and (min-width: 375px) and (max-width: 768px) {
+  .container {
+    width: 50%;
+  }
+
+  .signup_container {
+    width: 95%;
+  }
+}
+
+@media only screen and (min-width: 0) and (max-width: 375px) {
+  .container {
+    width: 90%;
+  }
+
+  .signup_container {
+    width: 95%;
+  }
+}
+
+  </style>
+  <body>
+    <div id="container"></div> <br><br>
+
+    <div class="header">
+        <!-- <a href="index.html"
+          ><img id="company-logo" src="logo.png" alt="company logo"
+        /></a> -->
+        <!-- <div class="header-right">
+          <a href="index.html">Home</a>
+  
+          <a id="isLogin" href="signup.html">Signup</a>
+          <a id="isLogin" href="login.html">Login</a>
+        </div>
+      </div> -->
+      <div class="container">
+        <!-- <img id="logo" src="logo.png" alt="logo" /> -->
+        <div class="signup_container">
+          <form id="signup">
+            <h1>Create account</h1>
+            <label>Username</label>
+            <input
+              type="text"
+              placeholder="enter username"
+              id="username"
+              required
+            />
+            <label>Email</label>
+            <input type="email" placeholder="enter email" id="email" required />
+            <label>Mobile</label>
+            <input
+              type="number"
+              placeholder="enter mobile"
+              id="number"
+              required
+            />
+            <label>Password</label>
+            <input
+              type="text"
+              placeholder="At least 6 characters"
+              id="password"
+              required
+            />
+            <input id="signupButton" type="submit" value="Signup" />
+          </form>
+        <!-- </div>
+        <a id="loginButton" href="./sign_in.html">
+          <button>Click here for Login</button>
+        </a> -->
+      </div>
+
+
+  </body>
+</html>
+
+<!-- <script type="module">
+
+  import navbar from "./components/navbar.js";
+  console.log("navbar:", navbar);
+
+  let container = document.getElementById("container");
+  container.innerHTML = navbar();
+  
+</script> -->
+
+<script>
+
+document.querySelector("#signup").addEventListener("submit", signUp);
+var userDataBase = JSON.parse(localStorage.getItem("userDataBase")) || [];
+var flag = false;
+
+function signUp(event) {
+  event.preventDefault();
+  var username = document.querySelector("#username").value;
+  var email = document.querySelector("#email").value;
+  var number = document.querySelector("#number").value;
+  var password = document.querySelector("#password").value;
+  localStorage.setItem("userName", username);
+  var userData = {
+    userName: username,
+    userEmail: email,
+    userNumber: number,
+    userPassword: password,
+  };
+  if (userDataBase.length != 0) {
+    var arr = JSON.parse(localStorage.getItem("userDataBase")) || [];
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].userEmail == email || arr[i].userNumber == number) {
+        flag = true;
+        break;
+      }
+    }
+    if (flag == true) {
+      alert("user already exists!!!");
+    } else {
+      userDataBase.push(userData);
+      localStorage.setItem("userDataBase", JSON.stringify(userDataBase));
+      alert("Signup Successful!!!");
+      window.location.href = "./sign_in.html";
+      document.querySelector("#username").value = "";
+      document.querySelector("#email").value = "";
+      document.querySelector("#number").value = "";
+      document.querySelector("#password").value = "";
+    }
+  } else {
+    userDataBase.push(userData);
+    localStorage.setItem("userDataBase", JSON.stringify(userDataBase));
+    alert("Signup Successful!!!");
+    window.location.href = "./sign_in.html";
+    document.querySelector("#username").value = "";
+    document.querySelector("#email").value = "";
+    document.querySelector("#number").value = "";
+    document.querySelector("#password").value = "";
+  }
+}
+
+
+
+</script>
